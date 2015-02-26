@@ -13,6 +13,7 @@
 		B627678A1A9F999200CB0311 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B62767891A9F999200CB0311 /* Images.xcassets */; };
 		B627678D1A9F999200CB0311 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B627678B1A9F999200CB0311 /* LaunchScreen.xib */; };
 		B62767991A9F999200CB0311 /* LookinLiveTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62767981A9F999200CB0311 /* LookinLiveTests.swift */; };
+		B62767A31A9F99AF00CB0311 /* VideoAnalgesic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62767A21A9F99AF00CB0311 /* VideoAnalgesic.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +37,7 @@
 		B62767921A9F999200CB0311 /* LookinLiveTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LookinLiveTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B62767971A9F999200CB0311 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B62767981A9F999200CB0311 /* LookinLiveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LookinLiveTests.swift; sourceTree = "<group>"; };
+		B62767A21A9F99AF00CB0311 /* VideoAnalgesic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoAnalgesic.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +92,7 @@
 		B62767801A9F999200CB0311 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B62767A21A9F99AF00CB0311 /* VideoAnalgesic.swift */,
 				B62767811A9F999200CB0311 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -212,6 +215,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B62767A31A9F99AF00CB0311 /* VideoAnalgesic.swift in Sources */,
 				B62767851A9F999200CB0311 /* ViewController.swift in Sources */,
 				B62767831A9F999200CB0311 /* AppDelegate.swift in Sources */,
 			);
