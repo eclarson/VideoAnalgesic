@@ -17,46 +17,59 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R6f-qp-sjg">
-                                <rect key="frame" x="16" y="530" width="37" height="30"/>
-                                <state key="normal" title="Flash">
+                            <button opaque="NO" alpha="0.64999999999999969" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R6f-qp-sjg">
+                                <rect key="frame" x="16" y="519" width="29" height="41"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="41" id="0k3-a1-OVs"/>
+                                    <constraint firstAttribute="width" constant="29" id="IPz-C2-7En"/>
+                                </constraints>
+                                <state key="normal" title="Flash" image="white-lightning-md">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
                                     <action selector="flash:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="IwT-zQ-TCe"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gXJ-3v-mto">
-                                <rect key="frame" x="221" y="530" width="83" height="30"/>
-                                <state key="normal" title="Flip Camera">
+                            <slider opaque="NO" alpha="0.59999999999999964" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="j7U-DN-DWH">
+                                <rect key="frame" x="78" y="525" width="164" height="31"/>
+                                <connections>
+                                    <action selector="setFlashLevel:" destination="vXZ-lx-hvc" eventType="valueChanged" id="0ga-Xs-JgJ"/>
+                                </connections>
+                            </slider>
+                            <button opaque="NO" alpha="0.59999999999999964" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gXJ-3v-mto">
+                                <rect key="frame" x="262" y="525" width="42" height="35"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="42" id="IIU-Lg-Xuo"/>
+                                    <constraint firstAttribute="height" constant="35" id="dZr-fQ-TCu"/>
+                                </constraints>
+                                <inset key="contentEdgeInsets" minX="0.0" minY="-5" maxX="0.0" maxY="-4"/>
+                                <state key="normal" title="Flip Camera" image="rotate_camera">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
                                     <action selector="switchCamera:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="uR0-Xw-5At"/>
                                 </connections>
                             </button>
-                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="j7U-DN-DWH">
-                                <rect key="frame" x="68" y="530" width="118" height="31"/>
-                                <connections>
-                                    <action selector="setFlashLevel:" destination="vXZ-lx-hvc" eventType="valueChanged" id="0ga-Xs-JgJ"/>
-                                </connections>
-                            </slider>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <gestureRecognizers/>
                         <constraints>
-                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="j7U-DN-DWH" secondAttribute="bottom" constant="8" id="0bO-ik-Jqf"/>
-                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="gXJ-3v-mto" secondAttribute="bottom" constant="8" id="Uwj-fB-Ang"/>
-                            <constraint firstItem="gXJ-3v-mto" firstAttribute="leading" secondItem="j7U-DN-DWH" secondAttribute="trailing" constant="37" id="VY6-xB-Hxe"/>
-                            <constraint firstItem="j7U-DN-DWH" firstAttribute="leading" secondItem="R6f-qp-sjg" secondAttribute="trailing" constant="17" id="VYy-O7-ea0"/>
-                            <constraint firstItem="gXJ-3v-mto" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="gmd-O3-rdE"/>
-                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="R6f-qp-sjg" secondAttribute="bottom" constant="8" id="iRA-Hf-2c9"/>
-                            <constraint firstItem="R6f-qp-sjg" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="p9X-od-KHn"/>
+                            <constraint firstItem="j7U-DN-DWH" firstAttribute="leading" secondItem="R6f-qp-sjg" secondAttribute="trailing" constant="35" id="75b-SL-THI"/>
+                            <constraint firstItem="gXJ-3v-mto" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="8WL-x3-VCm"/>
+                            <constraint firstItem="gXJ-3v-mto" firstAttribute="leading" secondItem="j7U-DN-DWH" secondAttribute="trailing" constant="22" id="Lq6-hc-a1N"/>
+                            <constraint firstItem="R6f-qp-sjg" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="S1p-e4-i5i"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="j7U-DN-DWH" secondAttribute="bottom" constant="13" id="TqJ-vm-eJq"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="gXJ-3v-mto" secondAttribute="bottom" constant="8" id="l4w-MU-zlF"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="R6f-qp-sjg" secondAttribute="bottom" constant="8" id="wgI-Nw-oDa"/>
                         </constraints>
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="CCN-KV-O34" appends="YES" id="1nk-qA-Ctj"/>
                         </connections>
                     </view>
+                    <connections>
+                        <outlet property="flashSlider" destination="j7U-DN-DWH" id="7PO-cJ-57T"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
                 <panGestureRecognizer minimumNumberOfTouches="1" id="CCN-KV-O34">
@@ -65,9 +78,13 @@
                     </connections>
                 </panGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="203.73333333333332" y="206.37333333333333"/>
+            <point key="canvasLocation" x="203" y="206"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="rotate_camera" width="512" height="512"/>
+        <image name="white-lightning-md" width="282" height="298"/>
+    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

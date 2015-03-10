@@ -402,23 +402,36 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
 
     }
     
-    func toggleFlash(){
+    func toggleFlash()->(Bool){
+        var isOn = false
         if (self.videoDevice!.hasTorch && self.devicePosition == AVCaptureDevicePosition.Back) {
             self.videoDevice!.lockForConfiguration(nil)
             if (self.videoDevice!.torchMode == AVCaptureTorchMode.On) {
                 self.videoDevice!.torchMode = AVCaptureTorchMode.Off
             } else {
-                self.videoDevice!.setTorchModeOnWithLevel(1.0, error: nil)
+                isOn = self.videoDevice!.setTorchModeOnWithLevel(1.0, error: nil)
             }
             self.videoDevice!.unlockForConfiguration()
         }
+        return isOn
     }
     
     
-    func turnOnFlashwithLevel(level:Float){
-        if (self.videoDevice!.hasTorch && self.devicePosition == AVCaptureDevicePosition.Back) {
+    func turnOnFlashwithLevel(level:Float) -> (Bool){
+        var isOverHeating = false
+        if (self.videoDevice!.hasTorch && self.devicePosition == AVCaptureDevicePosition.Back && level>0 && level<=1) {
             self.videoDevice!.lockForConfiguration(nil)
-            self.videoDevice!.setTorchModeOnWithLevel(level, error: nil)
+            isOverHeating = self.videoDevice!.setTorchModeOnWithLevel(level, error: nil)
+            self.videoDevice!.unlockForConfiguration()
+        }
+        return isOverHeating
+    }
+    
+    
+    func turnOffFlash(){
+        if (self.videoDevice!.hasTorch && self.videoDevice!.torchMode == AVCaptureTorchMode.On) {
+            self.videoDevice!.lockForConfiguration(nil)
+            self.videoDevice!.torchMode = AVCaptureTorchMode.Off
             self.videoDevice!.unlockForConfiguration()
         }
     }

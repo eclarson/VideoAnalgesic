@@ -11,6 +11,7 @@ import AVFoundation
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var flashSlider: UISlider!
     var videoManager : VideoAnalgesic! = nil
     let filter :CIFilter = CIFilter(name: "CIBumpDistortion")
     
@@ -32,7 +33,6 @@ class ViewController: UIViewController {
 
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -44,13 +44,13 @@ class ViewController: UIViewController {
         self.filter.setValue(-0.5, forKey: "inputScale")
         filter.setValue(75, forKey: "inputRadius")
         
-        let optsDetector = [CIDetectorAccuracy:CIDetectorAccuracyLow]
+        let optsDetector = [CIDetectorAccuracy:CIDetectorAccuracyLow,
+                            CIDetectorTracking:true,
+                      CIDetectorMinFeatureSize:0.5]
         
         let detector = CIDetector(ofType: CIDetectorTypeFace,
             context: self.videoManager.getCIContext(),
             options: optsDetector)
-        
-        
         
         self.videoManager.setProcessingBlock( { (imageInput) -> (CIImage) in
             var optsFace = [CIDetectorImageOrientation:self.videoManager.getImageOrientationFromUIOrientation(UIApplication.sharedApplication().statusBarOrientation)]
@@ -73,7 +73,12 @@ class ViewController: UIViewController {
     }
 
     @IBAction func flash(sender: AnyObject) {
-        self.videoManager.toggleFlash()
+        if(self.videoManager.toggleFlash()){
+            self.flashSlider.value = 1.0
+        }
+        else{
+            self.flashSlider.value = 0.0
+        }
     }
     
     @IBAction func switchCamera(sender: AnyObject) {
@@ -81,7 +86,12 @@ class ViewController: UIViewController {
     }
 
     @IBAction func setFlashLevel(sender: UISlider) {
-        self.videoManager.turnOnFlashwithLevel(sender.value)
+        if(sender.value>0.0){
+            self.videoManager.turnOnFlashwithLevel(sender.value)
+        }
+        else if(sender.value==0.0){
+            self.videoManager.turnOffFlash()
+        }
     }
 }
 
