@@ -402,7 +402,26 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
 
     }
     
+    func toggleFlash(){
+        if (self.videoDevice!.hasTorch && self.devicePosition == AVCaptureDevicePosition.Back) {
+            self.videoDevice!.lockForConfiguration(nil)
+            if (self.videoDevice!.torchMode == AVCaptureTorchMode.On) {
+                self.videoDevice!.torchMode = AVCaptureTorchMode.Off
+            } else {
+                self.videoDevice!.setTorchModeOnWithLevel(1.0, error: nil)
+            }
+            self.videoDevice!.unlockForConfiguration()
+        }
+    }
     
+    
+    func turnOnFlashwithLevel(level:Float){
+        if (self.videoDevice!.hasTorch && self.devicePosition == AVCaptureDevicePosition.Back) {
+            self.videoDevice!.lockForConfiguration(nil)
+            self.videoDevice!.setTorchModeOnWithLevel(level, error: nil)
+            self.videoDevice!.unlockForConfiguration()
+        }
+    }
     
     
 }
