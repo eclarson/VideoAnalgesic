@@ -105,8 +105,11 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
         }
     }
     
-    func getCIContext()->(CIContext){
-        return self.ciContext
+    func getCIContext()->(CIContext?){
+        if let context = self.ciContext{
+            return context;
+        }
+        return nil;
     }
     
     func getImageOrientationFromUIOrientation(interfaceOrientation:UIInterfaceOrientation)->(Int){
@@ -141,45 +144,48 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
     
         self.window = UIApplication.sharedApplication().delegate?.window
         
-        _eaglContext = EAGLContext(API: EAGLRenderingAPI.OpenGLES3)
-        if _eaglContext==nil{
-            NSLog("Attempting to fall back on OpenGL 2.0")
-            _eaglContext = EAGLContext(API: EAGLRenderingAPI.OpenGLES2)
-        }
+        _eaglContext = EAGLContext(API: EAGLRenderingAPI.OpenGLES2)
+        //        if _eaglContext==nil{
+        //            NSLog("Attempting to fall back on OpenGL 2.0")
+        //            _eaglContext = EAGLContext(API: EAGLRenderingAPI.OpenGLES2)
+        //        }
         
-        if _eaglContext==nil{
+        if _eaglContext != nil{
+            videoPreviewView = GLKView(frame: window!!.bounds, context: _eaglContext)
+            videoPreviewView.enableSetNeedsDisplay = false
+            
+            // because the native video image from the back camera is in UIDeviceOrientationLandscapeLeft (i.e. the home button is on the right), we need to apply a clockwise 90 degree transform so that we can draw the video preview as if we were in a landscape-oriented view; if you're using the front camera and you want to have a mirrored preview (so that the user is seeing themselves in the mirror), you need to apply an additional horizontal flip (by concatenating CGAffineTransformMakeScale(-1.0, 1.0) to the rotation transform)
+            
+            var transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
+            if devicePosition == AVCaptureDevicePosition.Front{
+                transform = CGAffineTransformConcat(transform, CGAffineTransformMakeScale(-1.0, 1.0))
+            }
+            videoPreviewView.transform = transform
+            videoPreviewView.frame = window!!.bounds
+            
+            // we make our video preview view a subview of the window, and send it to the back; this makes FHViewController's view (and its UI elements) on top of the video preview, and also makes video preview unaffected by device rotation
+            window!!.addSubview(videoPreviewView)
+            window!!.sendSubviewToBack(videoPreviewView)
+            
+            // create the CIContext instance, note that this must be done after _videoPreviewView is properly set up
+            ciContext = CIContext(EAGLContext: _eaglContext)
+            
+            // bind the frame buffer to get the frame buffer width and height;
+            // the bounds used by CIContext when drawing to a GLKView are in pixels (not points),
+            // hence the need to read from the frame buffer's width and height;
+            // in addition, since we will be accessing the bounds in another queue (_captureSessionQueue),
+            // we want to obtain this piece of information so that we won't be
+            // accessing _videoPreviewView's properties from another thread/queue
+            videoPreviewView.bindDrawable()
+            videoPreviewViewBounds = CGRectZero
+        }
+        else{
             NSLog("Could not fall back on OpenGL 2.0, exiting")
+            videoPreviewView = GLKView()
+            videoPreviewViewBounds = CGRectZero
         }
         
-        videoPreviewView = GLKView(frame: window!!.bounds, context: _eaglContext)
-        videoPreviewView.enableSetNeedsDisplay = false
-        
-        // because the native video image from the back camera is in UIDeviceOrientationLandscapeLeft (i.e. the home button is on the right), we need to apply a clockwise 90 degree transform so that we can draw the video preview as if we were in a landscape-oriented view; if you're using the front camera and you want to have a mirrored preview (so that the user is seeing themselves in the mirror), you need to apply an additional horizontal flip (by concatenating CGAffineTransformMakeScale(-1.0, 1.0) to the rotation transform)
-        
-        var transform = CGAffineTransformMakeRotation(CGFloat(M_PI_2))
-        if devicePosition == AVCaptureDevicePosition.Front{
-            transform = CGAffineTransformConcat(transform, CGAffineTransformMakeScale(-1.0, 1.0))
-        }
-        videoPreviewView.transform = transform
-        videoPreviewView.frame = window!!.bounds
-        
-        // we make our video preview view a subview of the window, and send it to the back; this makes FHViewController's view (and its UI elements) on top of the video preview, and also makes video preview unaffected by device rotation
-        window!!.addSubview(videoPreviewView)
-        window!!.sendSubviewToBack(videoPreviewView)
-        
-        // create the CIContext instance, note that this must be done after _videoPreviewView is properly set up
-        ciContext = CIContext(EAGLContext: _eaglContext)
-        
-        // bind the frame buffer to get the frame buffer width and height;
-        // the bounds used by CIContext when drawing to a GLKView are in pixels (not points),
-        // hence the need to read from the frame buffer's width and height;
-        // in addition, since we will be accessing the bounds in another queue (_captureSessionQueue),
-        // we want to obtain this piece of information so that we won't be
-        // accessing _videoPreviewView's properties from another thread/queue
-        videoPreviewView.bindDrawable()
-        videoPreviewViewBounds = CGRectZero;
-        
-        
+        super.init()
         
 
     }
@@ -212,7 +218,7 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
             }
             
             // obtain device input
-            let videoDeviceInput: AVCaptureDeviceInput = AVCaptureDeviceInput.deviceInputWithDevice(self.videoDevice, error:&error) as AVCaptureDeviceInput
+            let videoDeviceInput: AVCaptureDeviceInput = AVCaptureDeviceInput.deviceInputWithDevice(self.videoDevice, error:&error) as! AVCaptureDeviceInput
             
             if (error != nil)
             {
@@ -241,22 +247,24 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
             videoDataOutput.setSampleBufferDelegate(self, queue:self.captureSessionQueue)
             
             // begin configure capture session
-            self.captureSession!.beginConfiguration()
-            
-            if (!self.captureSession!.canAddOutput(videoDataOutput))
-            {
-                return;
+            if let capture = self.captureSession{
+                capture.beginConfiguration()
+                
+                if (!capture.canAddOutput(videoDataOutput))
+                {
+                    return;
+                }
+                
+                // connect the video device input and video data and still image outputs
+                capture.addInput(videoDeviceInput as AVCaptureInput)
+                capture.addOutput(videoDataOutput)
+                
+                capture.commitConfiguration()
+                
+                // then start everything
+                capture.startRunning()
             }
-            
-            // connect the video device input and video data and still image outputs
-            self.captureSession!.addInput(videoDeviceInput as AVCaptureInput)
-            self.captureSession!.addOutput(videoDataOutput)
-            
-            self.captureSession!.commitConfiguration()
-            
-            // then start everything
-            self.captureSession!.startRunning()
-            
+        
             self.updateOrientation()
         }
     }
@@ -314,6 +322,7 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
         }
         else{
             NSLog("Could not start Analgesic video manager");
+            NSLog("Be sure that you are running from an iOS device, not the simulator")
             self._isRunning = false;
         }
         
@@ -404,14 +413,16 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
     
     func toggleFlash()->(Bool){
         var isOn = false
-        if (self.videoDevice!.hasTorch && self.devicePosition == AVCaptureDevicePosition.Back) {
-            self.videoDevice!.lockForConfiguration(nil)
-            if (self.videoDevice!.torchMode == AVCaptureTorchMode.On) {
-                self.videoDevice!.torchMode = AVCaptureTorchMode.Off
-            } else {
-                isOn = self.videoDevice!.setTorchModeOnWithLevel(1.0, error: nil)
+        if let device = self.videoDevice{
+            if (device.hasTorch && self.devicePosition == AVCaptureDevicePosition.Back) {
+                device.lockForConfiguration(nil)
+                if (device.torchMode == AVCaptureTorchMode.On) {
+                    device.torchMode = AVCaptureTorchMode.Off
+                } else {
+                    isOn = device.setTorchModeOnWithLevel(1.0, error: nil)
+                }
+                device.unlockForConfiguration()
             }
-            self.videoDevice!.unlockForConfiguration()
         }
         return isOn
     }
@@ -419,20 +430,24 @@ class VideoAnalgesic: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate, AV
     
     func turnOnFlashwithLevel(level:Float) -> (Bool){
         var isOverHeating = false
-        if (self.videoDevice!.hasTorch && self.devicePosition == AVCaptureDevicePosition.Back && level>0 && level<=1) {
-            self.videoDevice!.lockForConfiguration(nil)
-            isOverHeating = self.videoDevice!.setTorchModeOnWithLevel(level, error: nil)
-            self.videoDevice!.unlockForConfiguration()
+        if let device = self.videoDevice{
+            if (device.hasTorch && self.devicePosition == AVCaptureDevicePosition.Back && level>0 && level<=1) {
+                device.lockForConfiguration(nil)
+                isOverHeating = device.setTorchModeOnWithLevel(level, error: nil)
+                device.unlockForConfiguration()
+            }
         }
         return isOverHeating
     }
     
     
     func turnOffFlash(){
-        if (self.videoDevice!.hasTorch && self.videoDevice!.torchMode == AVCaptureTorchMode.On) {
-            self.videoDevice!.lockForConfiguration(nil)
-            self.videoDevice!.torchMode = AVCaptureTorchMode.Off
-            self.videoDevice!.unlockForConfiguration()
+        if let device = self.videoDevice{
+            if (device.hasTorch && device.torchMode == AVCaptureTorchMode.On) {
+                device.lockForConfiguration(nil)
+                device.torchMode = AVCaptureTorchMode.Off
+                device.unlockForConfiguration()
+            }
         }
     }
     

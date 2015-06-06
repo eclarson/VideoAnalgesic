@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -44,7 +44,7 @@
                                     <constraint firstAttribute="height" constant="35" id="dZr-fQ-TCu"/>
                                 </constraints>
                                 <inset key="contentEdgeInsets" minX="0.0" minY="-5" maxX="0.0" maxY="-4"/>
-                                <state key="normal" title="Flip Camera" image="rotate_camera">
+                                <state key="normal" title="🔃">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -63,26 +63,17 @@
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="gXJ-3v-mto" secondAttribute="bottom" constant="8" id="l4w-MU-zlF"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="R6f-qp-sjg" secondAttribute="bottom" constant="8" id="wgI-Nw-oDa"/>
                         </constraints>
-                        <connections>
-                            <outletCollection property="gestureRecognizers" destination="CCN-KV-O34" appends="YES" id="1nk-qA-Ctj"/>
-                        </connections>
                     </view>
                     <connections>
                         <outlet property="flashSlider" destination="j7U-DN-DWH" id="7PO-cJ-57T"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
-                <panGestureRecognizer minimumNumberOfTouches="1" id="CCN-KV-O34">
-                    <connections>
-                        <action selector="panRecognized:" destination="vXZ-lx-hvc" id="msD-SD-rrR"/>
-                    </connections>
-                </panGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="203" y="206"/>
         </scene>
     </scenes>
     <resources>
-        <image name="rotate_camera" width="512" height="512"/>
         <image name="white-lightning-md" width="282" height="298"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
